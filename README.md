@@ -1,92 +1,122 @@
-# LLVM-taskgraph
+# The LLVM Compiler Infrastructure
 
+This directory and its sub-directories contain the source code for LLVM,
+a toolkit for the construction of highly optimized compilers,
+optimizers, and run-time environments.
 
+The README briefly describes how to get started with building LLVM.
+For more information on how to contribute to the LLVM project, please
+take a look at the
+[Contributing to LLVM](https://llvm.org/docs/Contributing.html) guide.
 
-## Getting started
+## Getting Started with the LLVM System
 
-To make it easy for you to get started with GitLab, here's a list of recommended next steps.
+Taken from [here](https://llvm.org/docs/GettingStarted.html).
 
-Already a pro? Just edit this README.md and make it your own. Want to make it easy? [Use the template at the bottom](#editing-this-readme)!
+### Overview
 
-## Add your files
+Welcome to the LLVM project!
 
-- [ ] [Create](https://docs.gitlab.com/ee/user/project/repository/web_editor.html#create-a-file) or [upload](https://docs.gitlab.com/ee/user/project/repository/web_editor.html#upload-a-file) files
-- [ ] [Add files using the command line](https://docs.gitlab.com/ee/gitlab-basics/add-file.html#add-a-file-using-the-command-line) or push an existing Git repository with the following command:
+The LLVM project has multiple components. The core of the project is
+itself called "LLVM". This contains all of the tools, libraries, and header
+files needed to process intermediate representations and convert them into
+object files. Tools include an assembler, disassembler, bitcode analyzer, and
+bitcode optimizer. It also contains basic regression tests.
 
-```
-cd existing_repo
-git remote add origin https://gitlab.bsc.es/ppc-bsc/llvm-taskgraph.git
-git branch -M main
-git push -uf origin main
-```
+C-like languages use the [Clang](http://clang.llvm.org/) frontend. This
+component compiles C, C++, Objective-C, and Objective-C++ code into LLVM bitcode
+-- and from there into object files, using LLVM.
 
-## Integrate with your tools
+Other components include:
+the [libc++ C++ standard library](https://libcxx.llvm.org),
+the [LLD linker](https://lld.llvm.org), and more.
 
-- [ ] [Set up project integrations](https://gitlab.bsc.es/ppc-bsc/llvm-taskgraph/-/settings/integrations)
+### Getting the Source Code and Building LLVM
 
-## Collaborate with your team
+The LLVM Getting Started documentation may be out of date. The [Clang
+Getting Started](http://clang.llvm.org/get_started.html) page might have more
+accurate information.
 
-- [ ] [Invite team members and collaborators](https://docs.gitlab.com/ee/user/project/members/)
-- [ ] [Create a new merge request](https://docs.gitlab.com/ee/user/project/merge_requests/creating_merge_requests.html)
-- [ ] [Automatically close issues from merge requests](https://docs.gitlab.com/ee/user/project/issues/managing_issues.html#closing-issues-automatically)
-- [ ] [Enable merge request approvals](https://docs.gitlab.com/ee/user/project/merge_requests/approvals/)
-- [ ] [Automatically merge when pipeline succeeds](https://docs.gitlab.com/ee/user/project/merge_requests/merge_when_pipeline_succeeds.html)
+This is an example work-flow and configuration to get and build the LLVM source:
 
-## Test and Deploy
+1. Checkout LLVM (including related sub-projects like Clang):
 
-Use the built-in continuous integration in GitLab.
+     * ``git clone https://github.com/llvm/llvm-project.git``
 
-- [ ] [Get started with GitLab CI/CD](https://docs.gitlab.com/ee/ci/quick_start/index.html)
-- [ ] [Analyze your code for known vulnerabilities with Static Application Security Testing(SAST)](https://docs.gitlab.com/ee/user/application_security/sast/)
-- [ ] [Deploy to Kubernetes, Amazon EC2, or Amazon ECS using Auto Deploy](https://docs.gitlab.com/ee/topics/autodevops/requirements.html)
-- [ ] [Use pull-based deployments for improved Kubernetes management](https://docs.gitlab.com/ee/user/clusters/agent/)
-- [ ] [Set up protected environments](https://docs.gitlab.com/ee/ci/environments/protected_environments.html)
+     * Or, on windows, ``git clone --config core.autocrlf=false
+    https://github.com/llvm/llvm-project.git``
 
-***
+2. Configure and build LLVM and Clang:
 
-# Editing this README
+     * ``cd llvm-project``
 
-When you're ready to make this README your own, just edit this file and use the handy template below (or feel free to structure it however you want - this is just a starting point!). Thank you to [makeareadme.com](https://www.makeareadme.com/) for this template.
+     * ``cmake -S llvm -B build -G <generator> [options]``
 
-## Suggestions for a good README
-Every project is different, so consider which of these sections apply to yours. The sections used in the template are suggestions for most open source projects. Also keep in mind that while a README can be too long and detailed, too long is better than too short. If you think your README is too long, consider utilizing another form of documentation rather than cutting out information.
+        Some common build system generators are:
 
-## Name
-Choose a self-explaining name for your project.
+        * ``Ninja`` --- for generating [Ninja](https://ninja-build.org)
+          build files. Most llvm developers use Ninja.
+        * ``Unix Makefiles`` --- for generating make-compatible parallel makefiles.
+        * ``Visual Studio`` --- for generating Visual Studio projects and
+          solutions.
+        * ``Xcode`` --- for generating Xcode projects.
 
-## Description
-Let people know what your project can do specifically. Provide context and add a link to any reference visitors might be unfamiliar with. A list of Features or a Background subsection can also be added here. If there are alternatives to your project, this is a good place to list differentiating factors.
+        Some common options:
 
-## Badges
-On some READMEs, you may see small images that convey metadata, such as whether or not all the tests are passing for the project. You can use Shields to add some to your README. Many services also have instructions for adding a badge.
+        * ``-DLLVM_ENABLE_PROJECTS='...'`` and ``-DLLVM_ENABLE_RUNTIMES='...'`` ---
+          semicolon-separated list of the LLVM sub-projects and runtimes you'd like to
+          additionally build. ``LLVM_ENABLE_PROJECTS`` can include any of: clang,
+          clang-tools-extra, cross-project-tests, flang, libc, libclc, lld, lldb,
+          mlir, openmp, polly, or pstl. ``LLVM_ENABLE_RUNTIMES`` can include any of
+          libcxx, libcxxabi, libunwind, compiler-rt, libc or openmp. Some runtime
+          projects can be specified either in ``LLVM_ENABLE_PROJECTS`` or in
+          ``LLVM_ENABLE_RUNTIMES``.
 
-## Visuals
-Depending on what you are making, it can be a good idea to include screenshots or even a video (you'll frequently see GIFs rather than actual videos). Tools like ttygif can help, but check out Asciinema for a more sophisticated method.
+          For example, to build LLVM, Clang, libcxx, and libcxxabi, use
+          ``-DLLVM_ENABLE_PROJECTS="clang" -DLLVM_ENABLE_RUNTIMES="libcxx;libcxxabi"``.
 
-## Installation
-Within a particular ecosystem, there may be a common way of installing things, such as using Yarn, NuGet, or Homebrew. However, consider the possibility that whoever is reading your README is a novice and would like more guidance. Listing specific steps helps remove ambiguity and gets people to using your project as quickly as possible. If it only runs in a specific context like a particular programming language version or operating system or has dependencies that have to be installed manually, also add a Requirements subsection.
+        * ``-DCMAKE_INSTALL_PREFIX=directory`` --- Specify for *directory* the full
+          path name of where you want the LLVM tools and libraries to be installed
+          (default ``/usr/local``). Be careful if you install runtime libraries: if
+          your system uses those provided by LLVM (like libc++ or libc++abi), you
+          must not overwrite your system's copy of those libraries, since that
+          could render your system unusable. In general, using something like
+          ``/usr`` is not advised, but ``/usr/local`` is fine.
 
-## Usage
-Use examples liberally, and show the expected output if you can. It's helpful to have inline the smallest example of usage that you can demonstrate, while providing links to more sophisticated examples if they are too long to reasonably include in the README.
+        * ``-DCMAKE_BUILD_TYPE=type`` --- Valid options for *type* are Debug,
+          Release, RelWithDebInfo, and MinSizeRel. Default is Debug.
 
-## Support
-Tell people where they can go to for help. It can be any combination of an issue tracker, a chat room, an email address, etc.
+        * ``-DLLVM_ENABLE_ASSERTIONS=On`` --- Compile with assertion checks enabled
+          (default is Yes for Debug builds, No for all other build types).
 
-## Roadmap
-If you have ideas for releases in the future, it is a good idea to list them in the README.
+      * ``cmake --build build [-- [options] <target>]`` or your build system specified above
+        directly.
 
-## Contributing
-State if you are open to contributions and what your requirements are for accepting them.
+        * The default target (i.e. ``ninja`` or ``make``) will build all of LLVM.
 
-For people who want to make changes to your project, it's helpful to have some documentation on how to get started. Perhaps there is a script that they should run or some environment variables that they need to set. Make these steps explicit. These instructions could also be useful to your future self.
+        * The ``check-all`` target (i.e. ``ninja check-all``) will run the
+          regression tests to ensure everything is in working order.
 
-You can also document commands to lint the code or run tests. These steps help to ensure high code quality and reduce the likelihood that the changes inadvertently break something. Having instructions for running tests is especially helpful if it requires external setup, such as starting a Selenium server for testing in a browser.
+        * CMake will generate targets for each tool and library, and most
+          LLVM sub-projects generate their own ``check-<project>`` target.
 
-## Authors and acknowledgment
-Show your appreciation to those who have contributed to the project.
+        * Running a serial build will be **slow**. To improve speed, try running a
+          parallel build. That's done by default in Ninja; for ``make``, use the option
+          ``-j NNN``, where ``NNN`` is the number of parallel jobs to run.
+          In most cases, you get the best performance if you specify the number of CPU threads you have.
+          On some Unix systems, you can specify this with ``-j$(nproc)``.
 
-## License
-For open source projects, say how it is licensed.
+      * For more information see [CMake](https://llvm.org/docs/CMake.html).
 
-## Project status
-If you have run out of energy or time for your project, put a note at the top of the README saying that development has slowed down or stopped completely. Someone may choose to fork your project or volunteer to step in as a maintainer or owner, allowing your project to keep going. You can also make an explicit request for maintainers.
+Consult the
+[Getting Started with LLVM](https://llvm.org/docs/GettingStarted.html#getting-started-with-llvm)
+page for detailed information on configuring and compiling LLVM. You can visit
+[Directory Layout](https://llvm.org/docs/GettingStarted.html#directory-layout)
+to learn about the layout of the source code tree.
+
+## Getting in touch
+
+Join [LLVM Discourse forums](https://discourse.llvm.org/), [discord chat](https://discord.gg/xS7Z362) or #llvm IRC channel on [OFTC](https://oftc.net/).
+
+The LLVM project has adopted a [code of conduct](https://llvm.org/docs/CodeOfConduct.html) for
+participants to all modes of communication within the project.
