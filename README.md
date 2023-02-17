@@ -89,6 +89,7 @@ This is an example work-flow and configuration to get and build the LLVM source:
         * ``-DLLVM_ENABLE_ASSERTIONS=On`` --- Compile with assertion checks enabled
           (default is Yes for Debug builds, No for all other build types).
 
+
       * ``cmake --build build [-- [options] <target>]`` or your build system specified above
         directly.
 
@@ -105,6 +106,8 @@ This is an example work-flow and configuration to get and build the LLVM source:
           ``-j NNN``, where ``NNN`` is the number of parallel jobs to run.
           In most cases, you get the best performance if you specify the number of CPU threads you have.
           On some Unix systems, you can specify this with ``-j$(nproc)``.
+
+      * To build with **Taskgraph**, insert the following option ``cmake [options] -DLIBOMP_TASKGRAPH=1``
 
       * For more information see [CMake](https://llvm.org/docs/CMake.html).
 
